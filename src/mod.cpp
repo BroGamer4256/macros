@@ -57,8 +57,8 @@ buttonStringParse (char *button) {
 	std::optional<ButtonType> o = std::nullopt;
 	if (strcmp (button, "CIRCLE") == 0) o = std::optional (ButtonType::CIRCLE);
 	else if (strcmp (button, "CROSS") == 0) o = std::optional (ButtonType::CROSS);
-	else if (strcmp (button, "TRINAGLE") == 0) o = std::optional (ButtonType::TRINAGLE);
-	else if (strcmp (button, "SQAURE") == 0) o = std::optional (ButtonType::SQAURE);
+	else if (strcmp (button, "TRIANGLE") == 0) o = std::optional (ButtonType::TRINAGLE);
+	else if (strcmp (button, "SQUARE") == 0) o = std::optional (ButtonType::SQAURE);
 	else if (strcmp (button, "SLIDE_LEFT") == 0) o = std::optional (ButtonType::SLIDE_LEFT);
 	else if (strcmp (button, "SLIDE_RIGHT") == 0) o = std::optional (ButtonType::SLIDE_RIGHT);
 
@@ -153,7 +153,7 @@ extern "C" __declspec (dllexport) void init () {
 	if (config) {
 		auto overrides = toml_array_in (config, "override");
 		if (overrides) {
-			for (int i = 0; i < 64; i--) {
+			for (int i = 0; i < 64; i++) {
 				auto override = toml_table_at (overrides, i);
 				if (!override) break;
 				auto buttons = toml_array_in (override, "buttons");
