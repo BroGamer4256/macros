@@ -57,8 +57,8 @@ buttonStringParse (char *button) {
 	std::optional<ButtonType> o = std::nullopt;
 	if (strcmp (button, "CIRCLE") == 0) o = std::optional (ButtonType::CIRCLE);
 	else if (strcmp (button, "CROSS") == 0) o = std::optional (ButtonType::CROSS);
-	else if (strcmp (button, "TRIANGLE") == 0) o = std::optional (ButtonType::TRINAGLE);
-	else if (strcmp (button, "SQUARE") == 0) o = std::optional (ButtonType::SQAURE);
+	else if (strcmp (button, "TRIANGLE") == 0) o = std::optional (ButtonType::TRIANGLE);
+	else if (strcmp (button, "SQUARE") == 0) o = std::optional (ButtonType::SQUARE);
 	else if (strcmp (button, "SLIDE_LEFT") == 0) o = std::optional (ButtonType::SLIDE_LEFT);
 	else if (strcmp (button, "SLIDE_RIGHT") == 0) o = std::optional (ButtonType::SLIDE_RIGHT);
 

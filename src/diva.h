@@ -177,8 +177,8 @@ struct vector {
 enum class ButtonType : i32 {
 	CIRCLE      = 0,
 	CROSS       = 1,
-	TRINAGLE    = 2,
-	SQAURE      = 3,
+	TRIANGLE    = 2,
+	SQUARE      = 3,
 	SLIDE_LEFT  = 4,
 	SLIDE_RIGHT = 7,
 };
