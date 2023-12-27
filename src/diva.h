@@ -98,11 +98,10 @@ struct map {
 
 	std::optional<V *> find (K key) {
 		auto ptr = this->root->parent;
-		while (!ptr->isNull) {
+		while (!ptr->isNull)
 			if (key == ptr->key) return std::optional (&ptr->value);
-			if (key > ptr->key) ptr = ptr->right;
-			if (key < ptr->key) ptr = ptr->left;
-		}
+			else if (key > ptr->key) ptr = ptr->right;
+			else if (key < ptr->key) ptr = ptr->left;
 		return std::nullopt;
 	}
 
@@ -112,8 +111,33 @@ struct map {
 		auto ptr = this->root->parent;
 		while (!ptr->right->isNull && !ptr->left->isNull)
 			if (!ptr->right->isNull) ptr = ptr->right;
-			else ptr = ptr->right;
+			else ptr = ptr->left;
 		return ptr;
+	}
+	void insert (K key, V value) {
+		auto elem     = allocate<mapElement<K, V>> (1);
+		elem->isNull  = false;
+		elem->isBlack = false;
+		elem->key     = key;
+		elem->value   = value;
+		elem->left    = this->root;
+		elem->right   = this->root;
+		auto ptr      = this->root->parent;
+		while (!ptr->isNull) {
+			if (key == ptr->key) return;
+			else if (key > ptr->key) {
+				if (ptr->right->isNull) {
+					elem->parent = ptr;
+					ptr->right   = elem;
+				} else ptr = ptr->right;
+			} else if (key < ptr->key) {
+				if (ptr->left->isNull) {
+					elem->parent = ptr;
+					ptr->left    = elem;
+				} else ptr = ptr->left;
+			}
+		}
+		this->length += 1;
 	}
 };
 

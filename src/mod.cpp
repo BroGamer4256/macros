@@ -4,20 +4,12 @@
 
 using namespace diva;
 
-#pragma pack(8)
-struct MapInsertionPoint {
-	mapElement<i32, list<Key>> *insertionPoint;
-	bool unk;
-};
-
 struct Override {
 	std::vector<ButtonType> buttons;
 	std::vector<Key> keys;
 	i32 id;
 };
 std::vector<Override> Overrides;
-
-FUNCTION_PTR (void, InsertMapElement, 0x140157A50, map<i32, list<Key>> *map, MapInsertionPoint *location, mapElement<i32, list<Key>> *newNode);
 
 bool inited = false;
 HOOK (void *, RegisterButtonPresses, 0x1401DBD70, void *a1, void *inputState, i32 buttonId) {
@@ -38,15 +30,7 @@ HOOK (void *, RegisterButtonKeys, 0x1401DB160, void *a1) {
 		list<Key> keys;
 		for (auto key : override.keys)
 			keys.push_back (key);
-		auto elem    = new mapElement<i32, list<Key>>;
-		elem->left   = (*buttonKeys)->begin ();
-		elem->parent = (*buttonKeys)->begin ();
-		elem->right  = (*buttonKeys)->begin ();
-		elem->key    = override.id;
-		elem->value  = keys;
-		elem->isNull = false;
-		MapInsertionPoint a2{(*buttonKeys)->bottom (), false};
-		InsertMapElement (*buttonKeys, &a2, elem);
+		(*buttonKeys)->insert (override.id, keys);
 	}
 
 	return ret;
@@ -149,6 +133,7 @@ keyStringParse (char *key) {
 }
 
 extern "C" __declspec (dllexport) void init () {
+	freopen ("CONOUT$", "w", stdout);
 	auto config = openConfig (std::filesystem::current_path () / "config.toml");
 	if (config) {
 		auto overrides = toml_array_in (config, "override");
@@ -168,6 +153,10 @@ extern "C" __declspec (dllexport) void init () {
 					if (auto buttonType = buttonStringParse (button.u.s)) {
 						o.buttons.push_back (buttonType.value ());
 						hasButton = true;
+					} else {
+						auto button = toml_string_at (buttons, j);
+						printf ("Failed to parse button %s\n", button.u.s);
+						free (button.u.s);
 					}
 				}
 				for (int j = 0;; j++) {
@@ -176,11 +165,22 @@ extern "C" __declspec (dllexport) void init () {
 					if (auto keyType = keyStringParse (key.u.s)) {
 						o.keys.push_back (keyType.value ());
 						hasKey = true;
+					} else {
+						auto key = toml_string_at (keys, j);
+						printf ("Failed to parse key %s\n", key.u.s);
+						free (key.u.s);
 					}
 				}
 				if (hasButton && hasKey) {
 					o.id = -i + 63;
 					Overrides.push_back (o);
+					printf ("[macro] Adding buttons ");
+					for (auto button : o.buttons)
+						printf ("%x ", (i32)button);
+					printf ("for keys ");
+					for (auto key : o.keys)
+						printf ("%x ", (i32)key);
+					printf ("with id %d\n", o.id);
 				}
 			}
 		}
