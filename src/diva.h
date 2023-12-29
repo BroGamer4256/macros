@@ -122,18 +122,21 @@ struct map {
 		elem->value   = value;
 		elem->left    = this->root;
 		elem->right   = this->root;
-		auto ptr      = this->root->parent;
+
+		auto ptr = this->root->parent;
 		while (!ptr->isNull) {
-			if (key == ptr->key) return;
+			if (key == ptr->key) break;
 			else if (key > ptr->key) {
 				if (ptr->right->isNull) {
 					elem->parent = ptr;
 					ptr->right   = elem;
+					break;
 				} else ptr = ptr->right;
 			} else if (key < ptr->key) {
 				if (ptr->left->isNull) {
 					elem->parent = ptr;
 					ptr->left    = elem;
+					break;
 				} else ptr = ptr->left;
 			}
 		}
